@@ -1,8 +1,9 @@
 package Animals;
 
 public class Cat extends Animal{
-
-	public Cat(String name, int age, String type) {
+public String weight;
+public String category;
+	public Cat(String name, Integer age, String type) {
 		super(name, age, type);
 	}
 
@@ -13,7 +14,19 @@ public class Cat extends Animal{
 
 	@Override
 	public String eat(Animal animal) {
-		String eatingMessage = String.format("I am cat '%s' and I am eating", animal);
+		String eatingMessage;
+
+		if (animal.getAge() == null) {
+			throw new NumberFormatException();
+		}
+
+		if (animal.getAge() < 1) {
+			eatingMessage = String.format("I am young cat '%s' and I am eating", animal);
+		} else {
+
+		eatingMessage = String.format("I am adult cat '%s' and I am eating", animal);
+		}
+
 		return eatingMessage;
 	}
 }

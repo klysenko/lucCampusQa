@@ -2,10 +2,10 @@ package Animals;
 
 public abstract class Animal {
 	private String name;
-	private int age;
+	private Integer age;
 	private String type;
 
-	public Animal(String name, int age, String type) {
+	public Animal(String name, Integer age, String type) {
 		this.name = name;
 		this.age = age;
 		this.type = type;
@@ -19,7 +19,7 @@ public abstract class Animal {
 		this.name = name;
 	}
 
-	public int getAge() {
+	public Integer getAge() {
 		return age;
 	}
 
