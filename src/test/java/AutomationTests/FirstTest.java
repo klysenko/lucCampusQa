@@ -17,6 +17,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.locators.RelativeLocator;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -187,6 +188,31 @@ public class FirstTest {
 		Assertions.assertEquals(1, elements.size());
 		boolean isElementActive = elements.get(0).getAttribute("class").contains("active");
 		Assertions.assertTrue(isElementActive);
+
+	}
+
+	@Test
+	public void byXpath() {
+		//GIVEN
+		//WHEN
+		driver.get("https://www.selenium.dev/documentation/webdriver/");
+		WebElement headerElement = driver.findElement(By.xpath("(//div[@class='entry'])[3]//a"));
+		headerElement.click();
+		String currentUrl = driver.getCurrentUrl();
+		//THEN
+		org.assertj.core.api.Assertions.assertThat(currentUrl).endsWith("browser/");
+	}
+
+	@Test
+	public void byRelativeLocator() throws InterruptedException {
+		//GIVEN
+		//WHEN
+		driver.get("http://online-sh.herokuapp.com/login");
+		By emailLocator = RelativeLocator.with(By.tagName("input")).above(By.id("exampleInputPassword1"));
+		WebElement emailInput = driver.findElement(emailLocator);
+		emailInput.sendKeys("emailTest@test.com");
+		//THEN
+		Thread.sleep(4000L);
 
 	}
 
