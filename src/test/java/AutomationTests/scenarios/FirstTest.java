@@ -1,13 +1,16 @@
-package AutomationTests;
+package AutomationTests.scenarios;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -52,56 +55,25 @@ public class FirstTest {
 	}
 
 	@Test
-	public void testSearchResultPresent_seleniumInput() throws InterruptedException {
-		//GIVEN
-		driver.get("https://www.google.com/");
-
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofMillis(300L));
-		WebElement input = driver.findElement(By.xpath(".//input[@name='q']"));
-		WebElement gmailLink = driver.findElement(By.linkText("Gmail"));
-		Actions actions = new Actions(driver);
-		//WHEN
-		//actions.moveToElement(gmailLink).click().perform();
-		//Thread.sleep(100L);
-
-		//WHEN
-		//input.sendKeys("QA automation");
-		//input.sendKeys(Keys.ENTER);
-		//actions.sendKeys(input, "QA Automation").sendKeys(Keys.ENTER).perform();
-		//THEN
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(".//ulc")));
-
-
-
-	}
-
-	@Test
-	public void testSearchResultPresent_actions() throws InterruptedException {
-		//GIVEN
-		driver.get("https://www.google.com/");
-
-		WebElement gmailLink = driver.findElement(By.linkText("Gmail"));
-		Actions actionProvider = new Actions(driver);
-		// Performs mouse move action onto the element
-		actionProvider.moveToElement(gmailLink).click().build().perform();
-		Thread.sleep(1000L);
-
-	}
-
-	@Test
-	public void testSearchResultPresent_JsInput() {
+	public void testSearchResultPresent() throws IOException {
 		//GIVEN
 		driver.get("https://www.google.com/");
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofMillis(500L));
+		FluentWait<WebDriver> driverFluentWait = new FluentWait<>(driver).withTimeout(Duration.ofMillis(3000L))
+				.pollingEvery(Duration.ofMillis(300L));
 		WebElement input = driver.findElement(By.xpath(".//input[@name='q']"));
+
 		//WHEN
-		JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
 		// set the text
-		jsExecutor.executeScript("arguments[0].value='QA'", input);
+		input.sendKeys("QA");
 		input.sendKeys(Keys.ENTER);
 
 		//THEN
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(".//ul")));
+		//wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(".//ul")));
+		driverFluentWait.until(e -> e.findElement(By.xpath(".//ul")));
+		TakesScreenshot screenDriver = (TakesScreenshot) driver;
+		File screenshotAs = screenDriver.getScreenshotAs(OutputType.FILE);
+		FileUtils.copyFile(screenshotAs, new File("/Users/kate/Documents/Testscreen.png"));
 
 	}
 
@@ -250,8 +222,6 @@ public class FirstTest {
 		By emailLocator = RelativeLocator.with(By.tagName("input")).above(By.id("exampleInputPassword1"));
 		WebElement emailInput = driver.findElement(emailLocator);
 		emailInput.sendKeys("test@test.com");
-		Duration pageLoadTimeout = driver.manage().timeouts().getPageLoadTimeout();
-		Duration timeout = driver.manage().timeouts().getImplicitWaitTimeout();
 		String currentTab = driver.getWindowHandle();
 		driver.switchTo().newWindow(WindowType.TAB);
 		Thread.sleep(3000L);
@@ -312,105 +282,6 @@ public class FirstTest {
 		//THEN
 		String currentUrl = driver.getCurrentUrl();
 		Assertions.assertEquals("http://online-sh.herokuapp.com/products", currentUrl);
-	}
-
-	@Test
-	public void clickCheckbox() throws InterruptedException {
-		//GIVEN
-		//WHEN
-		driver.manage().window().maximize();
-		driver.get("https://mdbootstrap.com/docs/standard/forms/checkbox/");
-		WebElement checkboxElementInput = driver.findElement(By.xpath("//label[contains(.,' Default checkbox')]//preceding-sibling::input"));
-		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true)", checkboxElementInput);
-
-		//THEN
-		Assertions.assertFalse(checkboxElementInput.isSelected());
-
-		//WHEN
-		((JavascriptExecutor) driver).executeScript("arguments[0].click()", checkboxElementInput);
-		Thread.sleep(3000L);
-		//THEN
-		Assertions.assertTrue(checkboxElementInput.isSelected());
-
-	}
-
-	@Test
-	public void shouldSearch_byLink_Alerts() {
-		//GIVEN
-		String expectedUrl = "https://t.me/air_alert_ua";
-		//WHEN
-		driver.get("https://alerts.in.ua/");
-		String mainWindow = driver.getWindowHandle();
-		WebElement linkElement = driver.findElement(By.xpath("(//a[text()[contains(.,'Повітряна тривога')]])[1]"));
-
-		((JavascriptExecutor) driver).executeScript("arguments[0].click()", linkElement);
-
-		//THEN
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10L));
-		wait.until(ExpectedConditions.numberOfWindowsToBe(2));
-
-		for (String windowHandler : driver.getWindowHandles()) {
-			if(!mainWindow.contentEquals(windowHandler)) {
-				driver.switchTo().window(windowHandler);
-				break;
-			}
-		}
-
-		String actualCurrentUrl = driver.getCurrentUrl();
-		Assertions.assertEquals(expectedUrl,actualCurrentUrl);
-		//WHEN
-		driver.switchTo().window(mainWindow);
-
-	}
-
-	@Test
-	public void clickRadiobutton() {
-		//GIVEN
-		//WHEN
-		driver.manage().window().maximize();
-		driver.get("https://www.javascripttutorial.net/javascript-dom/javascript-radio-button/");
-
-		driver.switchTo().frame(0);
-		WebElement radiobuttonElementInput = driver.findElement(By.xpath("//input[@id='xs']"));
-
-		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true)", radiobuttonElementInput);
-
-		//THEN
-		Assertions.assertFalse(radiobuttonElementInput.isSelected());
-
-		//WHEN
-
-		((JavascriptExecutor) driver).executeScript("arguments[0].click()", radiobuttonElementInput);
-		driver.manage().timeouts().implicitlyWait(Duration.ofMillis(3000L));
-		//THEN
-		Assertions.assertTrue(radiobuttonElementInput.isSelected());
-		driver.switchTo().defaultContent();
-
-	}
-
-	@Test
-	public void testSelect() {
-		//GIVEN
-		//WHEN
-		driver.get("https://getbootstrap.com/docs/5.0/forms/select/");
-		WebElement selectElement = driver.findElement(By.xpath("(//select[@class='form-select'])[1]"));
-		Select select = new Select(selectElement);
-		select.selectByVisibleText("Two");
-		//THEN
-		WebElement firstSelectedOption = select.getFirstSelectedOption();
-		Assertions.assertEquals("Two", firstSelectedOption.getText());
-		Assertions.assertTrue(firstSelectedOption.isSelected());
-		Assertions.assertFalse(select.isMultiple());
-
-		//WHEN
-		List<WebElement> options = select.getOptions();
-
-		//THEN
-		Assertions.assertEquals(4, options.size());
-
-		//WHEN
-		select.deselectAll();
-
 	}
 	
 	@AfterEach
