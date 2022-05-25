@@ -4,6 +4,10 @@ import java.time.Duration;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.CacheLookup;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.How;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -11,9 +15,15 @@ public class LoginPage {
 
 	private WebDriver driver;
 
-	By emailInput = By.id("exampleInputEmail1");
-	By passwordInput = By.id("exampleInputPassword1");
-	By submitButton= By.xpath("//button[contains(@class,'btn-primary')]");
+	@FindBy(id="exampleInputEmail1")
+	private WebElement emailInput;
+
+	@FindBy(how = How.ID, using = "exampleInputPassword1")
+	@CacheLookup
+	private WebElement passwordInput;
+
+	@FindBy(how = How.XPATH, using = "//button[contains(@class,'btn-primary')]")
+	private WebElement submitButton;
 
 	public LoginPage(WebDriver driver) {
 		this.driver = driver;
@@ -21,17 +31,17 @@ public class LoginPage {
 
 	public LoginPage setEmail(String emailText) {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofMillis(500L));
-		wait.until(ExpectedConditions.presenceOfElementLocated(emailInput)).sendKeys(emailText);
+		wait.until(ExpectedConditions.elementToBeClickable(emailInput)).sendKeys(emailText);
 		return this;
 	}
 
 	public LoginPage setPassword(String passwordText) {
-		driver.findElement(passwordInput).sendKeys(passwordText);
+		passwordInput.sendKeys(passwordText);
 		return this;
 	}
 
 	public LoginPage submit() {
-		driver.findElement(submitButton).click();
+		submitButton.click();
 		return this;
 	}
 

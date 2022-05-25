@@ -7,8 +7,10 @@ import org.openqa.selenium.PageLoadStrategy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.PageFactory;
 
 import AutomationTests.pages.LoginPage;
+import AutomationTests.pages.testClient.Client;
 
 public class LoginTest {
 
@@ -24,21 +26,25 @@ public class LoginTest {
 		options.setPageLoadStrategy(PageLoadStrategy.EAGER);
 
 		driver = new ChromeDriver(options);
-		loginPage = new LoginPage(driver);
+		loginPage = PageFactory.initElements(driver, LoginPage.class);
 	}
 
 	@Test
-	public void testClick() {
+	public void testLogin() {
 		//GIVEN
+		Client client = new Client.ClientBuilder(123L)
+				.withName("test")
+				.withLastName("testLastName")
+				.build();
 		String existingUserEmail = "test@test.com";
 		String existingUserPassword = "test";
 		//WHEN
 		loginPage.openLoginPage();
 
-		LoginTest.loginPage.setEmail(existingUserEmail);
-		LoginTest.loginPage.setPassword(existingUserPassword);
+		loginPage.setEmail(existingUserEmail);
+		loginPage.setPassword(existingUserPassword);
 
-		LoginTest.loginPage.submit();
+		loginPage.submit();
 		//THEN
 		checkUserIsRedirectedToProducts();
 	}
