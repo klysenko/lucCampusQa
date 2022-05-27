@@ -1,4 +1,4 @@
-package AutomationTests.pages.testClient;
+package testClients;
 
 public class Client {
 	private final Long id;
@@ -7,6 +7,7 @@ public class Client {
 	private final String address;
 	private final Long balance;
 	private final Long rate;
+	private final String login;
 
 	private Client(ClientBuilder builder) {
 		this.id = builder.id;
@@ -15,6 +16,7 @@ public class Client {
 		this.address = builder.address;
 		this.balance = builder.balance;
 		this.rate = builder.rate;
+		this.login = builder.login;
 	}
 
 	public Long getId() {
@@ -61,6 +63,7 @@ public class Client {
 		private String address;
 		private Long balance;
 		private Long rate;
+		private String login;
 
 		public ClientBuilder(Long id)
 		{
@@ -89,6 +92,11 @@ public class Client {
 
 		public ClientBuilder withRate(Long rate) {
 			this.rate = rate;
+			return this;
+		}
+
+		public ClientBuilder withLogin(String login) {
+			this.login = login;
 			return this;
 		}
 
